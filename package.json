@@ -1,0 +1,24 @@
+{
+  "name": "tiny-app",
+  "version": "1.0.0",
+  "description": "TinyApp project that shortens URLs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "tiny-app"
+  },
+  "keywords": [
+    "tiny",
+    "app",
+    "urls"
+  ],
+  "author": "Esther Splett",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^2.6.1",
+    "express": "^4.16.4"
+  }
+}
