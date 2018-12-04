@@ -33,6 +33,11 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", { urls: urlDatabase });
 });
 
+//render page for FORM
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
+});
+
 //new route
 app.get("/urls/:id", (req, res) => {
   let templateVars = {
@@ -40,3 +45,7 @@ app.get("/urls/:id", (req, res) => {
     shortURL: req.params.id };
   res.render("urls_show", templateVars);
 });
+
+//body parser allows access to POST
+const bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({extended: true}));
