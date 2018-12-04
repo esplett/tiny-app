@@ -47,5 +47,12 @@ app.get("/urls/:id", (req, res) => {
 });
 
 //body parser allows access to POST
+//returns undefined for URL without it
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
+
+//define route to match POST request
+app.post("/urls", (req, res) => {
+  console.log(req.body);  // debug statement to see POST parameters
+  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+});
