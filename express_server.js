@@ -56,3 +56,18 @@ app.post("/urls", (req, res) => {
   console.log(req.body);  // debug statement to see POST parameters
   res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
+
+
+
+//produce a string of 6 random alphanumeric characters
+function generateRandomString() {
+var anysize = 6;//the size of string
+var charset = "abcdefghijklmnopqrstuvwxyz1234567890"; //from where to create
+result="";
+for( var i=0; i < anysize; i++ )
+        result += charset[Math.floor(Math.random() * charset.length)];
+        return result;
+}
+
+
+console.log(generateRandomString());
