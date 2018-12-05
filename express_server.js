@@ -3,9 +3,7 @@ var express = require("express");
 var app = express();
 var PORT = 8080; // default port 8080
 var cookieParser = require('cookie-parser')
-
 app.use(cookieParser())
-
 app.set("view engine", "ejs")
 
 
@@ -39,21 +37,36 @@ app.get("/hello", (req, res) => {
 
 //root handler for urls
 app.get("/urls", (req, res) => {
-  res.render("urls_index", { urls: urlDatabase });
+  res.render("urls_index", { urls: urlDatabase, username: req.cookies["username"] });
 });
 
 //render page for FORM
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  let templateVars = {
+  username: req.cookies["username"],
+  };
+  res.render("urls_new", templateVars);
 });
 
 //new route
 app.get("/urls/:id", (req, res) => {
   let templateVars = {
+    username: req.cookies["username"],
     longURL: urlDatabase[req.params.id],
-    shortURL: req.params.id };
+    shortURL: req.params.id
+  };
   res.render("urls_show", templateVars);
 });
+
+//pass in the username to all views that include
+//_header.ejs partial
+//urls_index, _new, and _show
+
+// let templateVars = {
+//   username: req.cookies["username"],
+//   // .. any other vars
+// };
+// res.render("urls_index", templateVars);
 
 
 //body parser allows access to POST
@@ -98,5 +111,20 @@ app.post("/urls/:id/update", (req, res) => {
   urlDatabase[id] = longURL;
   res.redirect('/urls/' + id);
 });
+
+//COOKIES
+
+app.post("/urls/username/login", (req, res) => {
+  console.log(req.body);
+  const { username } = req.body;
+  res.cookie('username', username);
+  res.redirect('/urls');
+});
+
+// add an endpoint to handle a POST to /login in your
+// Express server. It should set a cookie named username
+// to the value/urls/username/login submitted in the request body
+// via the login form.
+// after set cookie redirect to /urls
 
 
