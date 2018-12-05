@@ -10,23 +10,20 @@
   </header>
 
 
-  <form method="POST" action="/urls/<%= longURL %>/put">
+<!--Add a form to the urls_show template that submits an updated long URL-->
 
-      <input type="text" name="input text"><button>Update</button>
+  <form method="POST" action="/urls/<%= shortURL %>/update">
+
+      <input type="text" name="longURL"><button type="submit">Update</button>
 
   </form>
+
 
 
 <%= longURL %>
 <%= shortURL %>
 
 
-<!--
-    Add a form to the urls_show template that submits an updated long URL
- -->
 </body>
 </html>
-
-access the correct long URL from urlDatabase, and add it to the templateVars object under an
-appropriately named key.
 

@@ -52,6 +52,7 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+
 //body parser allows access to POST
 //returns undefined for URL without it
 const bodyParser = require("body-parser");
@@ -84,5 +85,15 @@ app.post("/urls/:id/delete", (req, res) => {
   res.redirect("http://localhost:8080/urls/")
 });
 //shorturl is key, and longurl is value
+
+
+// Add a POST route that updates a URL resource;
+app.post("/urls/:id/update", (req, res) => {
+  console.log(req.body, req.params);
+  const { id } = req.params;
+  const { longURL } = req.body;
+  urlDatabase[id] = longURL;
+  res.redirect('/urls/' + id);
+});
 
 
