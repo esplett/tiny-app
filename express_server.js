@@ -114,17 +114,28 @@ app.post("/urls/:id/update", (req, res) => {
 
 //COOKIES
 
-app.post("/urls/username/login", (req, res) => {
+// add an endpoint to handle a POST to /login in your
+// Express server. It should set a cookie named username
+// to the value/urls/username/login submitted in the request body
+// via the login form.
+// after set cookie redirect to /urls
+
+
+app.post("/urls/login", (req, res) => {
   console.log(req.body);
   const { username } = req.body;
   res.cookie('username', username);
   res.redirect('/urls');
 });
 
-// add an endpoint to handle a POST to /login in your
-// Express server. It should set a cookie named username
-// to the value/urls/username/login submitted in the request body
-// via the login form.
-// after set cookie redirect to /urls
+//implement logout end point
+//clear code
+app.post("/urls/logout", (req, rest) => {
+  res.clearCookie('username', { path: '/urls' });
+  res.redirect('/urls');
+});
+
+
+
 
 
