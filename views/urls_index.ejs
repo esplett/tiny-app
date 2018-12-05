@@ -9,14 +9,25 @@
     <% include partials/_header %>
   </header>
 
-  <ul>
-     <% for (const name in urls) { %>
-        <li><a href="http://www.lighthouselabs.ca">
-            <a href=" http://www.google.com">
-          <%= name %>: <%= urls[name] %></a></a>
-        </li>
 
-    <% } %>
-  </ul>
+    <ul>
+       <% for (const name in urls) { %>
+
+
+          <form method="POST" action="/urls/<%= name %>/delete">
+            <button>Delete</button>
+          </form>
+
+         <%= name %>: <%= urls[name] %>
+        <% } %>
+
+
+
+
+    </ul>
+
+
+
 </body>
 </html>
+

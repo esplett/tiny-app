@@ -9,13 +9,21 @@
     <% include partials/_header %>
   </header>
 
-  <li>
+
+  <form method="POST" action="/urls/<%= longURL %>/put">
+
+      <input type="text" name="input text"><button>Update</button>
+
+  </form>
+
 
 <%= longURL %>
 <%= shortURL %>
 
-  </li>
 
+<!--
+    Add a form to the urls_show template that submits an updated long URL
+ -->
 </body>
 </html>
 

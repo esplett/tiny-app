@@ -60,7 +60,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 //define route to match POST request
 app.post("/urls", (req, res) => {
   let newString = generateRandomString();
-  console.log(req.body);  // debug statement to see POST parameters         // Respond with 'Ok' (we will replace this)
+  console.log(req.body);  // debug statement to see POST parameters
   urlDatabase[newString] = req.body.longURL;
   res.redirect("http://localhost:8080/urls/" +
     newString)
@@ -77,4 +77,12 @@ for( var i=0; i < anysize; i++ )
         result += charset[Math.floor(Math.random() * charset.length)];
         return result;
 }
+
+//handle Post delete requests
+app.post("/urls/:id/delete", (req, res) => {
+  delete urlDatabase[req.params.id];
+  res.redirect("http://localhost:8080/urls/")
+});
+//shorturl is key, and longurl is value
+
 
