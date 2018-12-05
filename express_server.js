@@ -8,8 +8,14 @@ app.set("view engine", "ejs")
 
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "9sm5xK": "http://www.google.com",
 };
+
+//handle shortURL requests
+app.get("/u/:shortURL", (req, res) => {
+  //let longURL =
+  res.redirect(longURL);
+});
 
 //registers handler on root path
 app.get("/", (req, res) => {
@@ -53,10 +59,13 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 //define route to match POST request
 app.post("/urls", (req, res) => {
-  console.log(req.body);  // debug statement to see POST parameters
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  let newString = generateRandomString();
+  console.log(req.body);  // debug statement to see POST parameters         // Respond with 'Ok' (we will replace this)
+  urlDatabase[newString] = req.body.longURL;
+  res.redirect("http://localhost:8080/urls/" +
+    newString)
 });
-
+//if you don't know what it is [] notation
 
 
 //produce a string of 6 random alphanumeric characters
@@ -69,5 +78,3 @@ for( var i=0; i < anysize; i++ )
         return result;
 }
 
-
-console.log(generateRandomString());
