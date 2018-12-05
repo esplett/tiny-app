@@ -13,7 +13,7 @@ var urlDatabase = {
 
 //handle shortURL requests
 app.get("/u/:shortURL", (req, res) => {
-  //let longURL =
+  let longURL = "/u/:shortURL";
   res.redirect(longURL);
 });
 
