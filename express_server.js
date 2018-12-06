@@ -120,8 +120,7 @@ app.post("/urls/:id/update", (req, res) => {
 // via the login form.
 // after set cookie redirect to /urls
 
-
-app.post("/urls/login", (req, res) => {
+app.post("/login", (req, res) => {
   console.log(req.body);
   const { username } = req.body;
   res.cookie('username', username);
@@ -130,12 +129,13 @@ app.post("/urls/login", (req, res) => {
 
 //implement logout end point
 //clear code
-app.post("/urls/logout", (req, rest) => {
+app.post("/logout", (req, rest) => {
   res.clearCookie('username', { path: '/urls' });
   res.redirect('/urls');
 });
 
-
-
-
+//create a registration page
+app.get("/register", (req, res) => {
+    res.render("register");
+});
 
