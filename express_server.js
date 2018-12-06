@@ -173,8 +173,8 @@ app.post("/login", (req, res) => {
 
 //implement logout end point
 //clear code
-app.post("/logout", (req, rest) => {
-  res.clearCookie('user_id', { path: '/urls' });
+app.post("/logout", (req, res) => {
+  res.clearCookie('user_id');
   res.redirect('/urls');
 });
 
