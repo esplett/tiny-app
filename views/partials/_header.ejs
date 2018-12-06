@@ -3,25 +3,18 @@
 <nav class="navbar navbar-default" role="navigation">
 <div class="container-fluid">
 
-    <div class="header">
-      <% if (username) { %>
+  <div class="header">
 
-       hello <%=username%>!
+    <% if (username) { %>
 
-      <% } else { %>
+    hello <%=username%>!
 
-            <form method="POST" action="/register">
-
-            <label>Type your user name: </label>
-
-            <input type="text" name="username"><button type="submit">Submit</button>
-
-            </form>
+    <% } else { %>
+      <a href="/register">Register</a><p>
+      <a href= "/login">Login</a></p>
 
      <% } %>
 
-
-    </div>
-
-</div>
+      </div>
+  </div>
 </nav>

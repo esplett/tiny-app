@@ -6,11 +6,31 @@ var cookieParser = require('cookie-parser')
 app.use(cookieParser())
 app.set("view engine", "ejs")
 
-
+//data store urls
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
 };
+
+//data store users
+const users = {
+  "userRandomID": {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk"
+  },
+ "user3RandomID": {
+    id: "user3RandomID",
+    email: "estherina@gmail.com",
+    password: "dumbcookies"
+  }
+}
+
 
 //handle shortURL requests
 app.get("/u/:shortURL", (req, res) => {
@@ -89,10 +109,10 @@ app.post("/urls", (req, res) => {
 function generateRandomString() {
 var anysize = 6;//the size of string
 var charset = "abcdefghijklmnopqrstuvwxyz1234567890"; //from where to create
-result="";
-for( var i=0; i < anysize; i++ )
+var result="";
+for( var i=0; i < anysize; i++ ) {
         result += charset[Math.floor(Math.random() * charset.length)];
-        return result;
+  } return result;
 }
 
 //handle Post delete requests
@@ -136,6 +156,94 @@ app.post("/logout", (req, rest) => {
 
 //create a registration page
 app.get("/register", (req, res) => {
-    res.render("register");
+  res.render("register");
 });
+
+//handles registration form data
+// adds newUser obj in global users obj
+// keeps track of email, password, id
+
+//req.params travels in URL not body
+
+app.post("/register", (req, res) => {
+  const {email, password} = req.body;
+
+    //check for email and password first
+    // return error if user and password are missing
+      if (!email || !password) {
+      //redirect
+      res.status(400).send('Please enter email and password')
+    // check if user already exists, send an error
+      } else if (findUser(email)) {
+        res.status(400).send('User already exists')
+    // create new user
+      } else {
+        const user_id = addNewUser(email, password);
+        //set cookie
+        res.cookie("user_id", user_id);
+        res.redirect("/urls");
+      }
+});
+
+//btw steps 4 and 7
+
+function addNewUser(email, password) {
+  //create new user object in database
+  const id = generateRandomString();
+  users[id] = {
+    id,
+    email,
+    password,
+    }
+  return id;
+}
+
+//have to wait until the loop is finished to return false
+function findUser(email) {
+  console.log(email);
+  for (const user_id in users) {
+  console.log(user_id)
+  console.log(users[user_id]);
+    if (users[user_id].email === email) {
+      return users[user_id];
+    // } else {
+    //   return false;
+    //
+    }
+  }
+}
+
+//login page
+app.get("/login", (req, res) => {
+  res.render("login");
+});
+
+
+
+
+
+//LOGIN page?
+//get the info from the form
+//Authenticate the user
+//redirect
+
+// function authenticateUser(email, password) {
+//   const [newUser] = Object.keys(users).filter()
+//    id ==> users[id].email && users[id].password === password
+// }
+
+//in main urls page
+//retrieve current user
+
+//registration
+
+// app.post("/register", (req, res) => {
+//   const {email, password} = req.body;
+//   const newUser =  authenticateUser(email, password);
+//   //if authenticates set cookie, store id
+//    if (newUser){
+//     res.cookie('newUser', newUser)
+//   }
+// })
+
 
