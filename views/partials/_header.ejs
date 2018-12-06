@@ -5,9 +5,9 @@
 
   <div class="header">
 
-    <% if (username) { %>
+    <% if (user) { %>
 
-    hello <%=username%>!
+    hello <%= user["email"]%>!
 
     <% } else { %>
       <a href="/register">Register</a><p>

@@ -57,13 +57,13 @@ app.get("/hello", (req, res) => {
 
 //root handler for urls
 app.get("/urls", (req, res) => {
-  res.render("urls_index", { urls: urlDatabase, username: req.cookies["username"] });
+  res.render("urls_index", { urls: urlDatabase, user: users[ req.cookies["user_id"] ] });
 });
 
 //render page for FORM
 app.get("/urls/new", (req, res) => {
   let templateVars = {
-  username: req.cookies["username"],
+  username: req.cookies["user_id"],
   };
   res.render("urls_new", templateVars);
 });
@@ -71,22 +71,15 @@ app.get("/urls/new", (req, res) => {
 //new route
 app.get("/urls/:id", (req, res) => {
   let templateVars = {
-    username: req.cookies["username"],
+    user: req.cookies["user_id"],
     longURL: urlDatabase[req.params.id],
     shortURL: req.params.id
   };
   res.render("urls_show", templateVars);
 });
-
 //pass in the username to all views that include
 //_header.ejs partial
 //urls_index, _new, and _show
-
-// let templateVars = {
-//   username: req.cookies["username"],
-//   // .. any other vars
-// };
-// res.render("urls_index", templateVars);
 
 
 //body parser allows access to POST
@@ -99,7 +92,7 @@ app.post("/urls", (req, res) => {
   let newString = generateRandomString();
   console.log(req.body);  // debug statement to see POST parameters
   urlDatabase[newString] = req.body.longURL;
-  res.redirect("http://localhost:8080/urls/" +
+  res.redirect("/urls/" +
     newString)
 });
 //if you don't know what it is [] notation
@@ -118,7 +111,7 @@ for( var i=0; i < anysize; i++ ) {
 //handle Post delete requests
 app.post("/urls/:id/delete", (req, res) => {
   delete urlDatabase[req.params.id];
-  res.redirect("http://localhost:8080/urls/")
+  res.redirect("/urls/")
 });
 //shorturl is key, and longurl is value
 
@@ -140,17 +133,28 @@ app.post("/urls/:id/update", (req, res) => {
 // via the login form.
 // after set cookie redirect to /urls
 
+
+//LOGIN
+
+app.get("/login", (req, res) => {
+  res.render("login");
+});
+
+//find user that matches email submitted via login
+// if user found compare pswd with existing user pswd
+// and set user_id // if !user return 403
+// if !user return 403
 app.post("/login", (req, res) => {
   console.log(req.body);
-  const { username } = req.body;
-  res.cookie('username', username);
-  res.redirect('/urls');
+  const { email } = req.body;
+    res.cookie('user_id', email);
+    res.redirect('/urls');
 });
 
 //implement logout end point
 //clear code
 app.post("/logout", (req, rest) => {
-  res.clearCookie('username', { path: '/urls' });
+  res.clearCookie('user_id', { path: '/urls' });
   res.redirect('/urls');
 });
 
@@ -213,10 +217,6 @@ function findUser(email) {
   }
 }
 
-//login page
-app.get("/login", (req, res) => {
-  res.render("login");
-});
 
 
 
@@ -231,9 +231,6 @@ app.get("/login", (req, res) => {
 //   const [newUser] = Object.keys(users).filter()
 //    id ==> users[id].email && users[id].password === password
 // }
-
-//in main urls page
-//retrieve current user
 
 //registration
 
