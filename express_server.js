@@ -140,16 +140,36 @@ app.get("/login", (req, res) => {
   res.render("login");
 });
 
-//find user that matches email submitted via login
+
 // if user found compare pswd with existing user pswd
-// and set user_id // if !user return 403
-// if !user return 403
+function authenticateUser(email, password) {
+  // filter
+  const [user_id] = Object.keys(users).filter(
+    id =>
+      users[id].email === email &&
+      password === users[id].password
+  );
+
+  return user_id;
+}
+
+//find user that matches email submitted via login
+// and set user_id
 app.post("/login", (req, res) => {
-  console.log(req.body);
-  const { email } = req.body;
-    res.cookie('user_id', email);
-    res.redirect('/urls');
+  const { email, password } = req.body;
+  // Authenticate the user
+  const user_id = authenticateUser(email, password);
+    //if authenticate
+    if (user_id) {
+      //set the cookie -> store the id
+      res.cookie("user_id", user_id);
+      res.redirect('/urls');
+    // if !user return 403
+    } else {
+      res.status(403).send('No user found')
+    }
 });
+
 
 //implement logout end point
 //clear code
