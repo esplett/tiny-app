@@ -2,9 +2,13 @@
 var express = require("express");
 var app = express();
 var PORT = 8080; // default port 8080
+const bcrypt = require('bcrypt');
+
+
 var cookieParser = require('cookie-parser')
 app.use(cookieParser())
 app.set("view engine", "ejs")
+
 
 //data store urls
 var urlDatabase = {
@@ -147,7 +151,7 @@ function authenticateUser(email, password) {
   const [user_id] = Object.keys(users).filter(
     id =>
       users[id].email === email &&
-      password === users[id].password
+      bcrypt.compareSync(password, users[id].password)
   );
 
   return user_id;
@@ -209,15 +213,13 @@ app.post("/register", (req, res) => {
       }
 });
 
-//btw steps 4 and 7
-
 function addNewUser(email, password) {
   //create new user object in database
   const id = generateRandomString();
   users[id] = {
     id,
     email,
-    password,
+    password: bcrypt.hashSync(password, 10),
     }
   return id;
 }
