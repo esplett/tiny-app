@@ -13,14 +13,15 @@
     <ul>
        <% for (const name in urls) { %>
 
-          <form method="POST" action="/urls/<%= name %>/delete">
-            <button>Delete</button>
-          </form>
-
-         <%= name %> &rarr; <a href = "http://localhost:8080/urls/<%= name %>"> <%= urls[name] %></a>
+       <%= name %> &rarr; <a href = "/urls/<%= name %>"> <%= urls[name].url %></a>
 
 
         <a href = "/urls/<%=name%>"> edit </a>
+
+        <form method="POST" action="/urls/<%= name %>/delete">
+          <button>Delete</button>
+        </form>
+
 
         <% } %>
 

@@ -19,27 +19,24 @@ app.use(cookieSession({
 
 //data store urls
 var urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
-};
+  "b2xVn2": {
+    user: "b@b.com",
+    url: "http://www.lighthouselabs.ca",
+    },
+  "9sm5xK": {
+    user: "a@a.com",
+    url: "http://www.google.com",
+    }
+  };
 
 //data store users
 const users = {
   "userRandomID": {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "purple-monkey-dinosaur"
-  },
- "user2RandomID": {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk"
-  },
- "user3RandomID": {
-    id: "user3RandomID",
-    email: "estherina@gmail.com",
-    password: "dumbcookies"
+    id: "userRandomId",
+    email: "user@blah.com",
+    password: "ddf"
   }
+
 }
 
 
@@ -68,7 +65,6 @@ app.get("/hello", (req, res) => {
 
 //root handler for urls
 app.get("/urls", (req, res) => {
-  //changed from user: users[ req.cookies["user_id"] ]
   res.render("urls_index", { urls: urlDatabase, user: users[ req.session.user_id ] });
 });
 
@@ -78,16 +74,20 @@ app.get("/urls", (req, res) => {
 //render page for FORM
 app.get("/urls/new", (req, res) => {
   let templateVars = {
-  username: req.session.user_id = user_id,
-  };
-  res.render("urls_new", templateVars);
+    user: users[req.session.user_id],
+    };
+      if (req.session.user_id) {
+      res.render("urls_new", templateVars);
+      } else {
+      res.redirect("/login")
+      }
 });
 
 //new route
 app.get("/urls/:id", (req, res) => {
   let templateVars = {
-    user: req.session.user_id = user_id,
-    longURL: urlDatabase[req.params.id],
+    user: req.session.user_id,
+    longURL: urlDatabase[req.params.id].url,
     shortURL: req.params.id
   };
 
@@ -188,7 +188,6 @@ app.post("/login", (req, res) => {
       res.status(403).send('No user found')
     }
 });
-
 
 //implement logout end point
 //clear code
