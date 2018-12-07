@@ -20,11 +20,11 @@ app.use(cookieSession({
 //data store urls
 var urlDatabase = {
   "b2xVn2": {
-    user: "b@b.com",
+    user: "123456",
     url: "http://www.lighthouselabs.ca",
     },
   "9sm5xK": {
-    user: "a@a.com",
+    user: "userRandomID",
     url: "http://www.google.com",
     }
   };
@@ -34,7 +34,7 @@ const users = {
   "userRandomID": {
     id: "userRandomId",
     email: "user@blah.com",
-    password: "ddf"
+    password: bcrypt.hashSync("ddf", 10)
   }
 
 }
@@ -85,14 +85,16 @@ app.get("/urls/new", (req, res) => {
 
 //new route
 app.get("/urls/:id", (req, res) => {
-  let templateVars = {
-    user: req.session.user_id,
-    longURL: urlDatabase[req.params.id].url,
-    shortURL: req.params.id
-  };
-
-
-  res.render("urls_show", templateVars);
+  if (req.session.user_id === urlDatabase[req.params.id].user) {
+    let templateVars = {
+      user: users[req.session.user_id],
+      longURL: urlDatabase[req.params.id].url,
+      shortURL: req.params.id
+    };
+    res.render("urls_show", templateVars);
+  } else {
+    res.redirect("/urls")
+  }
 });
 //pass in the username to all views that include
 //_header.ejs partial
@@ -108,11 +110,14 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.post("/urls", (req, res) => {
   let newString = generateRandomString();
   console.log(req.body);  // debug statement to see POST parameters
-  urlDatabase[newString] = req.body.longURL;
-  res.redirect("/urls/" +
-    newString)
+  urlDatabase[newString] =
+  { user : users[req.session.user_id].email,
+    url: req.body.longURL
+  };
+  res.redirect("/urls/" + newString)
 });
-//if you don't know what it is [] notation
+
+
 
 
 //produce a string of 6 random alphanumeric characters
@@ -127,19 +132,26 @@ for( var i=0; i < anysize; i++ ) {
 
 //handle Post delete requests
 app.post("/urls/:id/delete", (req, res) => {
-  delete urlDatabase[req.params.id];
-  res.redirect("/urls/")
+  if (req.session.user_id === urlDatabase[req.params.id].user) {
+    delete urlDatabase[req.params.id];
+    res.redirect("/urls/")
+  } else {
+    res.redirect("/urls")
+  }
 });
-//shorturl is key, and longurl is value
 
-
+//The edit feature
 // Add a POST route that updates a URL resource;
 app.post("/urls/:id/update", (req, res) => {
-  console.log(req.body, req.params);
-  const { id } = req.params;
-  const { longURL } = req.body;
-  urlDatabase[id] = longURL;
-  res.redirect('/urls/' + id);
+    if (req.session.user_id === urlDatabase[req.params.id].user) {
+    console.log(req.body, req.params);
+    const { id } = req.params;
+    const { longURL } = req.body;
+    urlDatabase[id].url = longURL;
+    res.redirect('/urls/' + id);
+  } else {
+    res.redirect('/urls/');
+  }
 });
 
 //COOKIES
@@ -211,6 +223,20 @@ app.get("/register", (req, res) => {
 
 //req.params travels in URL not body
 
+
+
+function addNewUser(email, password) {
+  //create new user object in database
+  const id = generateRandomString();
+  users[id] = {
+    id,
+    email,
+    password: bcrypt.hashSync(password, 10),
+    }
+  return id;
+}
+
+
 app.post("/register", (req, res) => {
   const {email, password} = req.body;
 
@@ -232,17 +258,6 @@ app.post("/register", (req, res) => {
       }
 });
 
-
-function addNewUser(email, password) {
-  //create new user object in database
-  const id = generateRandomString();
-  users[id] = {
-    id,
-    email,
-    password: bcrypt.hashSync(password, 10),
-    }
-  return id;
-}
 
 //have to wait until the loop is finished to return false
 function findUser(email) {
