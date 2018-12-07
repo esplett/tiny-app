@@ -20,7 +20,7 @@ app.use(cookieSession({
 //data store urls
 var urlDatabase = {
   "b2xVn2": {
-    user: "123456",
+    user: "userRandomID",
     url: "http://www.lighthouselabs.ca",
     },
   "9sm5xK": {
@@ -33,7 +33,7 @@ var urlDatabase = {
 const users = {
   "userRandomID": {
     id: "userRandomId",
-    email: "user@blah.com",
+    email: "a@b.c",
     password: bcrypt.hashSync("ddf", 10)
   }
 
@@ -42,7 +42,9 @@ const users = {
 
 //handle shortURL requests
 app.get("/u/:shortURL", (req, res) => {
-  let longURL = urlDatabase[req.params.shortURL]
+  console.log('urlDatabase', urlDatabase)
+  let longURL = urlDatabase[req.params.shortURL].url
+  console.log('longURL', longURL)
   res.redirect(longURL);
 });
 
@@ -63,36 +65,40 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+// function urlsForUser(id) {
+//   let newObj = {};
+//   for (var id in urlDatabase) {
+//     if (id === urlDatabase[id].user) {
+//       newObj = urlDatabase[id].user;
+//     }
+//   }
+//   return newObj;
+// }
+
 
 //returns subset of urlDatabase that belongs to user with ID id
-//comparing userID with loggin-in user's ID
-function urlsForUser(id) {
-  let newObj = {};
-    for (var id in urlDatabase) {
-      if (id === urlDatabase[id].user) {
-        newObj = urlDatabase[id].user;
-      } return newObj;
-    }
-}
-
+//comparing userID with logged-in user's ID
 //alternate way of creating urlsForUser
 
-// function urlsForUser(id) {
-//     //returning array of shortURLS
-//     return Object.keys(urlDatabase)
-//        //x is the key, user value matches id being passed in
-//        //.filter(x => false) would be empty array
-//       .filter( x => urlDatabase[x].user === id)
-//       .reduce((obj, id) => {
-//         return {...obj, [id]:urlDatabase[id]}
-//       }, {}) ;
-// }
+function urlsForUser(id) {
+    //returning array of shortURLS
+    return Object.keys(urlDatabase)
+       //x is the key, user value matches id being passed in
+       //.filter(x => false) would be empty array
+      .filter( x => urlDatabase[x].user === id)
+      .reduce((obj, id) => {
+        return {...obj, [id]:urlDatabase[id]}
+      }, {}) ;
+}
 
 //root handler for urls
 app.get("/urls", (req, res) => {
   const urlsMatch = urlsForUser(req.session.user_id);
+  console.log("urlsMatch", urlsMatch)
+  console.log("req.session.user_id", req.session.user_id)
   if (urlsMatch) {
     res.render("urls_index", { urls: urlsMatch, user: users[ req.session.user_id ] });
+
   } else {
     res.status(400).send('User not logged in')
   }
@@ -112,7 +118,6 @@ app.get("/urls/new", (req, res) => {
 });
 
 
-
 //new route
 app.get("/urls/:id", (req, res) => {
   if (req.session.user_id === urlDatabase[req.params.id].user) {
@@ -128,6 +133,7 @@ app.get("/urls/:id", (req, res) => {
     res.redirect("/urls");
   }
 });
+
 
 //pass in the username to all views that include
 //_header.ejs partial
