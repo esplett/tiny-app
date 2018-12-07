@@ -3,11 +3,18 @@ var express = require("express");
 var app = express();
 var PORT = 8080; // default port 8080
 const bcrypt = require('bcrypt');
+var cookieSession = require('cookie-session')
 
-
-var cookieParser = require('cookie-parser')
-app.use(cookieParser())
 app.set("view engine", "ejs")
+
+app.use(cookieSession({
+  name: 'session',
+  keys: ['hello'],
+
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}))
+
 
 
 //data store urls
@@ -61,13 +68,17 @@ app.get("/hello", (req, res) => {
 
 //root handler for urls
 app.get("/urls", (req, res) => {
-  res.render("urls_index", { urls: urlDatabase, user: users[ req.cookies["user_id"] ] });
+  //changed from user: users[ req.cookies["user_id"] ]
+  res.render("urls_index", { urls: urlDatabase, user: users[ req.session.user_id ] });
 });
+
+
+
 
 //render page for FORM
 app.get("/urls/new", (req, res) => {
   let templateVars = {
-  username: req.cookies["user_id"],
+  username: req.session.user_id = user_id,
   };
   res.render("urls_new", templateVars);
 });
@@ -75,10 +86,12 @@ app.get("/urls/new", (req, res) => {
 //new route
 app.get("/urls/:id", (req, res) => {
   let templateVars = {
-    user: req.cookies["user_id"],
+    user: req.session.user_id = user_id,
     longURL: urlDatabase[req.params.id],
     shortURL: req.params.id
   };
+
+
   res.render("urls_show", templateVars);
 });
 //pass in the username to all views that include
@@ -159,6 +172,7 @@ function authenticateUser(email, password) {
 
 //find user that matches email submitted via login
 // and set user_id
+
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
   // Authenticate the user
@@ -166,7 +180,8 @@ app.post("/login", (req, res) => {
     //if authenticate
     if (user_id) {
       //set the cookie -> store the id
-      res.cookie("user_id", user_id);
+      req.session.user_id = user_id;
+      // res.cookie("user_id", user_id);
       res.redirect('/urls');
     // if !user return 403
     } else {
@@ -178,9 +193,13 @@ app.post("/login", (req, res) => {
 //implement logout end point
 //clear code
 app.post("/logout", (req, res) => {
-  res.clearCookie('user_id');
+   req.session.user_id = null;
   res.redirect('/urls');
 });
+
+  //req.session.user_id = user_id;
+
+
 
 //create a registration page
 app.get("/register", (req, res) => {
@@ -208,10 +227,12 @@ app.post("/register", (req, res) => {
       } else {
         const user_id = addNewUser(email, password);
         //set cookie
-        res.cookie("user_id", user_id);
+        req.session.user_id = user_id;
+        // res.cookie("user_id", user_id);
         res.redirect("/urls");
       }
 });
+
 
 function addNewUser(email, password) {
   //create new user object in database
