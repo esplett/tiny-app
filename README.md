@@ -4,9 +4,8 @@ TinyApp is a full stack web application with Node and Express that allows users 
 
 ## Final Product
 
-!["screenshot of the Update page"](tiny-app/docs/update-page.png)
-!["screenshot of the Urls page"](
-        tiny-app/docs/urls-page.png
+!["screenshot of the Update page"](https://github.com/esplett/tiny-app/blob/master/docs/update-page.png?raw=true)
+!["screenshot of the Urls page"](https://github.com/esplett/tiny-app/blob/master/docs/urls-page.png?raw=true
       )
 
 ## Dependencies
