@@ -65,6 +65,10 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+
+
+//returns subset of urlDatabase that belongs to user with ID id
+//comparing userID with logged-in user's ID
 function urlsForUser(user_id) {
   let newObj = {};
   for (var id in urlDatabase) {
@@ -76,8 +80,6 @@ function urlsForUser(user_id) {
 }
 
 
-//returns subset of urlDatabase that belongs to user with ID id
-//comparing userID with logged-in user's ID
 //alternate way of creating urlsForUser
 
 // function urlsForUser(id) {
@@ -118,7 +120,9 @@ app.get("/urls/new", (req, res) => {
 });
 
 
-//new route
+
+//pass in the username to all views that include
+//_header.ejs partial
 app.get("/urls/:id", (req, res) => {
   if (req.session.user_id === urlDatabase[req.params.id].user) {
     let templateVars = {
@@ -133,12 +137,6 @@ app.get("/urls/:id", (req, res) => {
     res.redirect("/urls");
   }
 });
-
-
-//pass in the username to all views that include
-//_header.ejs partial
-//urls_index, _new, and _show
-
 
 //body parser allows access to POST
 //returns undefined for URL without it
@@ -155,7 +153,6 @@ app.post("/urls", (req, res) => {
   };
   res.redirect("/urls/" + newString)
 });
-
 
 
 //produce a string of 6 random alphanumeric characters
@@ -190,17 +187,8 @@ app.post("/urls/:id/update", (req, res) => {
   res.redirect('/urls/');
 });
 
-//COOKIES
-
-// add an endpoint to handle a POST to /login in your
-// Express server. It should set a cookie named username
-// to the value/urls/username/login submitted in the request body
-// via the login form.
-// after set cookie redirect to /urls
-
 
 //LOGIN
-
 app.get("/login", (req, res) => {
   res.render("login");
 });
@@ -214,13 +202,11 @@ function authenticateUser(email, password) {
       users[id].email === email &&
       bcrypt.compareSync(password, users[id].password)
   );
-
   return user_id;
 }
 
 //find user that matches email submitted via login
 // and set user_id
-
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
   // Authenticate the user
@@ -244,10 +230,6 @@ app.post("/logout", (req, res) => {
   res.redirect('/urls');
 });
 
-  //req.session.user_id = user_id;
-
-
-
 //create a registration page
 app.get("/register", (req, res) => {
   res.render("register");
@@ -256,11 +238,6 @@ app.get("/register", (req, res) => {
 //handles registration form data
 // adds newUser obj in global users obj
 // keeps track of email, password, id
-
-//req.params travels in URL not body
-
-
-
 function addNewUser(email, password) {
   //create new user object in database
   const id = generateRandomString();
@@ -275,11 +252,9 @@ function addNewUser(email, password) {
 
 app.post("/register", (req, res) => {
   const {email, password} = req.body;
-
     //check for email and password first
     // return error if user and password are missing
       if (!email || !password) {
-      //redirect
       res.status(400).send('Please enter email and password')
     // check if user already exists, send an error
       } else if (findUser(email)) {
@@ -303,9 +278,6 @@ function findUser(email) {
   console.log(users[user_id]);
     if (users[user_id].email === email) {
       return users[user_id];
-    // } else {
-    //   return false;
-    //
     }
   }
 }
