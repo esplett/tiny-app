@@ -65,42 +65,42 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
-// function urlsForUser(id) {
-//   let newObj = {};
-//   for (var id in urlDatabase) {
-//     if (id === urlDatabase[id].user) {
-//       newObj = urlDatabase[id].user;
-//     }
-//   }
-//   return newObj;
-// }
+function urlsForUser(user_id) {
+  let newObj = {};
+  for (var id in urlDatabase) {
+    if (user_id === urlDatabase[id].user) {
+      newObj[id] = urlDatabase[id];
+    }
+  }
+  return newObj;
+}
 
 
 //returns subset of urlDatabase that belongs to user with ID id
 //comparing userID with logged-in user's ID
 //alternate way of creating urlsForUser
 
-function urlsForUser(id) {
-    //returning array of shortURLS
-    return Object.keys(urlDatabase)
-       //x is the key, user value matches id being passed in
-       //.filter(x => false) would be empty array
-      .filter( x => urlDatabase[x].user === id)
-      .reduce((obj, id) => {
-        return {...obj, [id]:urlDatabase[id]}
-      }, {}) ;
-}
+// function urlsForUser(id) {
+//     //returning array of shortURLS
+//     return Object.keys(urlDatabase)
+//        //x is the key, user value matches id being passed in
+//        //.filter(x => false) would be empty array
+//       .filter( x => urlDatabase[x].user === id)
+//       .reduce((obj, id) => {
+//         return {...obj, [id]:urlDatabase[id]}
+//       }, {}) ;
+// }
 
 //root handler for urls
 app.get("/urls", (req, res) => {
   const urlsMatch = urlsForUser(req.session.user_id);
   console.log("urlsMatch", urlsMatch)
   console.log("req.session.user_id", req.session.user_id)
-  if (urlsMatch) {
+  if (req.session.user_id) {
     res.render("urls_index", { urls: urlsMatch, user: users[ req.session.user_id ] });
 
   } else {
-    res.status(400).send('User not logged in')
+    res.status(400).send('<a href="/login">Please login</a> or <a href="/register">register</a>')
   }
 });
 
@@ -181,15 +181,13 @@ app.post("/urls/:id/delete", (req, res) => {
 //The edit feature
 // Add a POST route that updates a URL resource;
 app.post("/urls/:id/update", (req, res) => {
-    if (req.session.user_id === urlDatabase[req.params.id].user) {
+  if (req.session.user_id === urlDatabase[req.params.id].user) {
     console.log(req.body, req.params);
     const { id } = req.params;
     const { longURL } = req.body;
     urlDatabase[id].url = longURL;
-    res.redirect('/urls/' + id);
-  } else {
-    res.redirect('/urls/');
   }
+  res.redirect('/urls/');
 });
 
 //COOKIES
@@ -317,25 +315,5 @@ function findUser(email) {
 
 
 
-//LOGIN page?
-//get the info from the form
-//Authenticate the user
-//redirect
-
-// function authenticateUser(email, password) {
-//   const [newUser] = Object.keys(users).filter()
-//    id ==> users[id].email && users[id].password === password
-// }
-
-//registration
-
-// app.post("/register", (req, res) => {
-//   const {email, password} = req.body;
-//   const newUser =  authenticateUser(email, password);
-//   //if authenticates set cookie, store id
-//    if (newUser){
-//     res.cookie('newUser', newUser)
-//   }
-// })
 
 
